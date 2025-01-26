@@ -1,33 +1,64 @@
 # capacitor-device-authenticity
 
-Check the authenticity of an Ionic Capacitor app
+### Verify the authenticity of your Ionic Capacitor app
 
-This plugin provides methods to check whether a device is jailbroken/rooted, inside an emulator, or not installed from the app store.
+The `capacitor-device-authenticity` plugin offers methods to check if a device is jailbroken, rooted, running in an emulator, or if the app is installed from unauthorized sources. It is designed to help developers enhance the security posture of their applications.
 
-This software is provided under the MIT License. The code included in this project, particularly the jailbreak detection method, is provided "as is" without warranty of any kind, express or implied.
-The authors and copyright holders of this software shall not be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
-Important Notes:
+---
 
-The jailbreak detection method provided is not guaranteed to be foolproof or comprehensive. It may not detect all instances of jailbroken devices or third-party app stores.
-This code is intended for informational and educational purposes only. It should not be relied upon as a sole means of security or integrity checking in production environments.
-The use of this code may have implications related to user privacy and device autonomy. Ensure that your use of this code complies with all applicable laws, regulations, and platform policies.
-The developers of this software do not encourage or endorse the unauthorized modification of devices or violation of terms of service of any platform.
-Users and implementers of this code are responsible for ensuring their own compliance with all relevant policies, laws, and regulations.
+## Disclaimer
 
-By using this software, you acknowledge that you have read this disclaimer and agree to its terms.
+This software is provided under the MIT License. It is offered "as is," without any express or implied warranties, including but not limited to the implied warranties of merchantability and fitness for a particular purpose. By using this software, you agree to the following:
 
-IMPORTANT: This plugin is still under development and is not yet ready for production use. The author has yet to verify if these calls trigger security warnings or cause app store rejections.
+1. **Limitations of Jailbreak/Root Detection**  
+   - The methods implemented in this plugin are not foolproof. They may fail to detect certain cases of jailbroken/rooted devices or unauthorized app store installations.
+   - This plugin is not a substitute for a comprehensive security strategy in production environments.
 
+2. **Educational and Informational Purposes Only**  
+   - The code is intended for developers seeking to learn or build basic device authenticity checks. It should not be solely relied upon for production-grade security measures.
+
+3. **Compliance and Responsibility**  
+   - Developers and users of this plugin are responsible for ensuring compliance with all relevant laws, regulations, and platform policies. Unauthorized modifications of devices or violations of platform terms of service are not encouraged or endorsed.
+
+4. **Privacy Considerations**  
+   - The use of this software may have implications for user privacy and device autonomy. Always disclose its use in your app's privacy policy if required by regulations.
+
+By using this plugin, you acknowledge and accept these terms.
+
+---
+
+## Development Status
+
+🚨 **Important:**  
+This plugin is still under development and is not ready for production use.  
+The author has not yet verified whether the methods provided may trigger security warnings or cause app store rejections.
+
+---
 
 [![HitCount](https://hits.dwyl.com/mchl18/capacitor-device-authenticity.svg)](https://hits.dwyl.com/mchl18/capacitor-device-authenticity)
 
 
 [![https://nodei.co/npm/capacitor-device-authenticity.png?downloads=true&downloadRank=true&stars=true](https://nodei.co/npm/capacitor-device-authenticity.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/capacitor-device-authenticity)
 
-## Install
+## Installation
+
+Install the plugin using your preferred package manager:
+
+### With npm:
 
 ```bash
 npm install capacitor-device-authenticity
+```
+
+### With yarn:
+
+```bash
+yarn add capacitor-device-authenticity
+```
+
+### Sync native files:
+
+```bash
 npx cap sync
 ```
 
@@ -48,12 +79,16 @@ npx cap sync
 * [`checkPrivateWrite()`](#checkprivatewrite)
 * [`hasThirdPartyAppStore()`](#hasthirdpartyappstore)
 * [`isError(...)`](#iserror)
-* [Type Aliases](#type-aliases)
+* [`isValid(...)`](#isvalid)
+* [Interfaces](#interfaces)
 
 </docgen-index>
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+Plugin interface for DeviceAuthenticity.
+Provides methods to check device integrity and authenticity on Android and iOS platforms.
 
 ### checkAuthenticity(...)
 
@@ -61,11 +96,18 @@ npx cap sync
 checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<DeviceAuthenticityResult | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                            |
-| ------------- | ------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticityoptions">DeviceAuthenticityOptions</a></code> |
+Checks the overall authenticity of the device.
+
+This method performs a comprehensive analysis of device authenticity,
+including emulator detection, rooting or jailbreaking status, and store installation verification.
+
+| Param         | Type                                                                            | Description                                          |
+| ------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticityoptions">DeviceAuthenticityOptions</a></code> | - Optional configuration for the authenticity check. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityresult">DeviceAuthenticityResult</a> | <a href="#deviceauthenticityerror">DeviceAuthenticityError</a>&gt;</code>
+
+**Since:** 0.0.3
 
 --------------------
 
@@ -76,7 +118,14 @@ checkAuthenticity(options?: DeviceAuthenticityOptions | undefined) => Promise<De
 isEmulator() => Promise<{ isEmulator: boolean; } | DeviceAuthenticityError>
 ```
 
+Determines if the current device is running as an emulator.
+
+This method helps identify whether the app is running in a simulated environment,
+which may indicate a non-authentic setup.
+
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isEmulator: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -87,11 +136,18 @@ isEmulator() => Promise<{ isEmulator: boolean; } | DeviceAuthenticityError>
 isJailbroken(options?: DeviceAuthenticityJailbreakOptions | undefined) => Promise<{ isJailbroken: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticityjailbreakoptions">DeviceAuthenticityJailbreakOptions</a></code> |
+Determines if the current iOS device is jailbroken.
+
+This method checks for common indicators of a jailbroken environment,
+such as modified system paths or unauthorized app store schemas.
+
+| Param         | Type                                                                                              | Description                                       |
+| ------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticityjailbreakoptions">DeviceAuthenticityJailbreakOptions</a></code> | - Optional configuration for jailbreak detection. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isJailbroken: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -102,11 +158,17 @@ isJailbroken(options?: DeviceAuthenticityJailbreakOptions | undefined) => Promis
 isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isRooted: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                        |
-| ------------- | ------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticityrootedoptions">DeviceAuthenticityRootedOptions</a></code> |
+Determines if the current Android device is rooted.
+
+This method identifies common indicators of rooting, such as modified files or system tags.
+
+| Param         | Type                                                                                        | Description                                  |
+| ------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticityrootedoptions">DeviceAuthenticityRootedOptions</a></code> | - Optional configuration for root detection. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isRooted: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -117,11 +179,17 @@ isRooted(options?: DeviceAuthenticityRootedOptions | undefined) => Promise<{ isR
 isNotInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedStoreOptions | undefined) => Promise<{ isNotInstalledFromAllowedStore: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                                                              |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticityinstalledfromallowedstoreoptions">DeviceAuthenticityInstalledFromAllowedStoreOptions</a></code> |
+Verifies if the app was not installed from an approved store.
+
+This check can help ensure the app's distribution complies with security policies.
+
+| Param         | Type                                                                                                                              | Description                                            |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **`options`** | <code><a href="#deviceauthenticityinstalledfromallowedstoreoptions">DeviceAuthenticityInstalledFromAllowedStoreOptions</a></code> | - Configuration specifying the list of allowed stores. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { isNotInstalledFromAllowedStore: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -132,7 +200,14 @@ isNotInstalledFromAllowedStore(options?: DeviceAuthenticityInstalledFromAllowedS
 getApkCertSignature() => Promise<{ apkCertSignature: string; } | DeviceAuthenticityError>
 ```
 
+Retrieves the APK certificate signature for the installed application.
+
+This method can be used for verifying the application's authenticity by comparing
+the signature with an expected value.
+
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { apkCertSignature: string; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -143,11 +218,15 @@ getApkCertSignature() => Promise<{ apkCertSignature: string; } | DeviceAuthentic
 checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions | undefined) => Promise<{ apkCertSignatureMatches: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                                                      |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticitycheckapkcertsignatureoptions">DeviceAuthenticityCheckApkCertSignatureOptions</a></code> |
+Checks if the APK certificate signature matches the expected value.
+
+| Param         | Type                                                                                                                      | Description                                            |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **`options`** | <code><a href="#deviceauthenticitycheckapkcertsignatureoptions">DeviceAuthenticityCheckApkCertSignatureOptions</a></code> | - Configuration specifying the expected APK signature. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { apkCertSignatureMatches: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -158,11 +237,15 @@ checkApkCertSignature(options?: DeviceAuthenticityCheckApkCertSignatureOptions |
 checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{ hasOffendingTags: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticitychecktagsoptions">DeviceAuthenticityCheckTagsOptions</a></code> |
+Analyzes the device for offending system tags that may indicate a rooted environment.
+
+| Param         | Type                                                                                              | Description                                   |
+| ------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitychecktagsoptions">DeviceAuthenticityCheckTagsOptions</a></code> | - Configuration specifying the tags to check. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasOffendingTags: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -173,11 +256,15 @@ checkTags(options?: DeviceAuthenticityCheckTagsOptions | undefined) => Promise<{
 checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise<{ hasOffendingPaths: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                                |
-| ------------- | --------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticitycheckpathsoptions">DeviceAuthenticityCheckPathsOptions</a></code> |
+Checks the device for paths associated with jailbreaking or rooting.
+
+| Param         | Type                                                                                                | Description                                    |
+| ------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitycheckpathsoptions">DeviceAuthenticityCheckPathsOptions</a></code> | - Configuration specifying the paths to check. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasOffendingPaths: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -188,11 +275,15 @@ checkPaths(options?: DeviceAuthenticityCheckPathsOptions | undefined) => Promise
 checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | undefined) => Promise<{ hasOffendingExecutableFiles: boolean; } | DeviceAuthenticityError>
 ```
 
-| Param         | Type                                                                                                                    |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code><a href="#deviceauthenticitycheckexecutablefilesoptions">DeviceAuthenticityCheckExecutableFilesOptions</a></code> |
+Examines executable files on the device for indicators of rooting.
+
+| Param         | Type                                                                                                                    | Description                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **`options`** | <code><a href="#deviceauthenticitycheckexecutablefilesoptions">DeviceAuthenticityCheckExecutableFilesOptions</a></code> | - Configuration specifying the files to check. |
 
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasOffendingExecutableFiles: boolean; }&gt;</code>
+
+**Since:** 0.0.4
 
 --------------------
 
@@ -203,7 +294,11 @@ checkExecutableFiles(options?: DeviceAuthenticityCheckExecutableFilesOptions | u
 checkPrivateWrite() => Promise<{ canWritePrivate: boolean; } | DeviceAuthenticityError>
 ```
 
+Determines if private directories are writable on the device (iOS only).
+
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { canWritePrivate: boolean; }&gt;</code>
+
+**Since:** 0.0.5
 
 --------------------
 
@@ -214,7 +309,11 @@ checkPrivateWrite() => Promise<{ canWritePrivate: boolean; } | DeviceAuthenticit
 hasThirdPartyAppStore() => Promise<{ hasThirdPartyAppStore: boolean; } | DeviceAuthenticityError>
 ```
 
+Checks if the device has any third-party app stores installed (iOS only).
+
 **Returns:** <code>Promise&lt;<a href="#deviceauthenticityerror">DeviceAuthenticityError</a> | { hasThirdPartyAppStore: boolean; }&gt;</code>
+
+**Since:** 0.0.5
 
 --------------------
 
@@ -225,66 +324,152 @@ hasThirdPartyAppStore() => Promise<{ hasThirdPartyAppStore: boolean; } | DeviceA
 isError(value: unknown) => value is DeviceAuthenticityError
 ```
 
-| Param       | Type                 |
-| ----------- | -------------------- |
-| **`value`** | <code>unknown</code> |
+Determines if the given value represents a <a href="#deviceauthenticityerror">DeviceAuthenticityError</a>.
+
+| Param       | Type                 | Description              |
+| ----------- | -------------------- | ------------------------ |
+| **`value`** | <code>unknown</code> | - The value to validate. |
 
 **Returns:** <code>boolean</code>
+
+**Since:** 0.0.4
 
 --------------------
 
 
-### Type Aliases
+### isValid(...)
+
+```typescript
+isValid(value: unknown) => value is string | boolean
+```
+
+Validates if the given value is a valid result (boolean or string).
+
+| Param       | Type                 | Description              |
+| ----------- | -------------------- | ------------------------ |
+| **`value`** | <code>unknown</code> | - The value to validate. |
+
+**Returns:** <code>boolean</code>
+
+**Since:** 0.0.4
+
+--------------------
+
+
+### Interfaces
 
 
 #### DeviceAuthenticityResult
 
-<code>{ // Android only isRooted?: boolean; // Both Android and iOS isEmulator?: boolean; // Android only isNotInstalledFromAllowedStore?: boolean; // iOS only isJailbroken?: boolean; // Android only apkCertSignature?: string; // If it is a string, it is the expected to be an error message. apkCertSignatureMatch?: boolean; // Android only hasOffendingExecutableFiles?: boolean; // Android only hasOffendingTags?: boolean; // iOS only hasOffendingPaths?: boolean; // iOS only canWritePrivate?: boolean; // iOS only hasThirdPartyAppStore?: boolean; // iOS only detectedThirdPartyAppStoreSchemas?: string[]; // iOS only detectedPrivateWritePaths?: string[]; // iOS only detectedOffendingPaths?: string[]; // Both Android and iOS failedChecks?: string[]; }</code>
+Result of the device authenticity check.
+
+| Prop                                    | Type                  | Description                                                                               |
+| --------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------- |
+| **`isRooted`**                          | <code>boolean</code>  | Indicates whether the device is rooted (Android only).                                    |
+| **`isEmulator`**                        | <code>boolean</code>  | Indicates whether the device is an emulator.                                              |
+| **`isNotInstalledFromAllowedStore`**    | <code>boolean</code>  | Indicates whether the app is installed from an unapproved store (Android only).           |
+| **`isJailbroken`**                      | <code>boolean</code>  | Indicates whether the device is jailbroken (iOS only).                                    |
+| **`apkCertSignature`**                  | <code>string</code>   | APK certificate signature (Android only).                                                 |
+| **`apkCertSignatureMatch`**             | <code>boolean</code>  | Indicates whether the APK certificate signature matches an expected value (Android only). |
+| **`hasOffendingExecutableFiles`**       | <code>boolean</code>  | Indicates the presence of offending executable files (Android only).                      |
+| **`hasOffendingTags`**                  | <code>boolean</code>  | Indicates the presence of offending tags (Android only).                                  |
+| **`hasOffendingPaths`**                 | <code>boolean</code>  | Indicates the presence of offending paths (iOS only).                                     |
+| **`canWritePrivate`**                   | <code>boolean</code>  | Indicates if private directories are writable (iOS only).                                 |
+| **`hasThirdPartyAppStore`**             | <code>boolean</code>  | Indicates whether a third-party app store is detected (iOS only).                         |
+| **`detectedThirdPartyAppStoreSchemas`** | <code>string[]</code> | List of detected third-party app store schemas (iOS only).                                |
+| **`detectedPrivateWritePaths`**         | <code>string[]</code> | List of detected writable private paths (iOS only).                                       |
+| **`detectedOffendingPaths`**            | <code>string[]</code> | List of detected offending paths (iOS only).                                              |
+| **`failedChecks`**                      | <code>string[]</code> | List of failed checks on both Android and iOS.                                            |
 
 
 #### DeviceAuthenticityError
 
-<code>{ error: string; }</code>
+Error object returned when a check fails.
+
+| Prop        | Type                | Description                                          |
+| ----------- | ------------------- | ---------------------------------------------------- |
+| **`error`** | <code>string</code> | A human-readable error message describing the issue. |
 
 
 #### DeviceAuthenticityOptions
 
-<code>{ // Android only allowedStores?: string[]; // Android only apkCertSignature?: string; // Android only // Override for the default root indicator paths which are: // "/system/app/Superuser.apk", // "/sbin/su", // "/system/bin/su", // "/system/xbin/su", // "/data/local/xbin/su", // "/data/local/bin/su", // "/system/sd/xbin/su", // "/system/bin/failsafe/su", // "/data/local/su", // "/su/bin/su" rootIndicatorPaths?: string[]; // Android only // Override for the default root indicator tags which are: // "test-keys", // Common for many rooted devices // "dev-keys", // Development keys, often seen in custom ROMs // "userdebug", // User-debuggable build, common in rooted devices // "engineering", // Engineering build, may indicate a modified system // "release-keys-debug", // Debug version of release keys // "custom", // Explicitly marked as custom // "rooted", // Explicitly marked as rooted (rare, but possible) // "supersu", // Indicates SuperSU rooting tool // "magisk", // Indicates Magisk rooting framework // "lineage", // LineageOS custom ROM // "unofficial" // Unofficial build, common in custom ROMs // If you are planning to extend the list, please do as follow: // const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOT_INDICATOR_TAGS, ...yourList]; // Then use completeList in the plugin. Otherwise, the default list will be used. rootIndicatorTags?: string[]; // iOS only // Override for the default jailbreak paths which are: // "/Applications/Cydia.app", // "/Library/MobileSubstrate/MobileSubstrate.dylib", // "/bin/bash", // "/usr/sbin/sshd", // "/etc/apt", // "/private/var/lib/apt/" // If you are planning to extend the list, please do as follow: // const completeList = [...DeviceAuthenticityWeb.DEFAULT_IOS_JAILBREAK_PATHS, ...yourList]; // Then use completeList in the plugin. Otherwise, the default list will be used. jailbreakIndicatorPaths?: string[]; // iOS only // Override for the default forbidden schemas which are: // "cydia://", // "sileo://", // "zbra://", // "filza://", // "undecimus://", // "activator://" offendingAppStoreSchemas?: string[]; // Android only // Override for the default rooted paths which are: // "/system/app/Superuser.apk", // "/sbin/su", // "/system/bin/su", // "/system/xbin/su", // "/data/local/xbin/su", // "/data/local/bin/su", // "/system/sd/xbin/su", // "/system/bin/failsafe/su", // "/data/local/su", // "/su/bin/su" // If you are planning to extend the list, please do as follow: // const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOTED_PATHS, ...yourList]; // Then use completeList in the plugin. Otherwise, the default list will be used. androidRootedPaths?: string[]; }</code>
+Options for configuring the device authenticity check.
+
+| Prop                           | Type                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`allowedStores`**            | <code>string[]</code> | List of allowed app stores for validation (Android only). Example: `['com.android.vending', 'com.amazon.venezia']`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **`apkCertSignature`**         | <code>string</code>   | Custom APK certificate signature for validation (Android only).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **`rootIndicatorPaths`**       | <code>string[]</code> | Override the default root indicator paths (Android only). Use in conjunction with default paths for best results. "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su", "/system/bin/failsafe/su", "/data/local/su", "/su/bin/su"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **`rootIndicatorTags`**        | <code>string[]</code> | Override the default root indicator tags (Android only). Example: `['test-keys', 'magisk', 'supersu']` "test-keys", // Common for many rooted devices "dev-keys", // Development keys, often seen in custom ROMs "userdebug", // User-debuggable build, common in rooted devices "engineering", // Engineering build, may indicate a modified system "release-keys-debug", // Debug version of release keys "custom", // Explicitly marked as custom "rooted", // Explicitly marked as rooted (rare, but possible) "supersu", // Indicates SuperSU rooting tool "magisk", // Indicates Magisk rooting framework "lineage", // LineageOS custom ROM "unofficial" // Unofficial build, common in custom ROMs If you are planning to extend the list, please do as follow: const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOT_INDICATOR_TAGS, ...yourList]; Then use completeList in the plugin. Otherwise, the default list will be used. |
+| **`jailbreakIndicatorPaths`**  | <code>string[]</code> | Override the default jailbreak indicator paths (iOS only). "/Applications/Cydia.app", "/Library/MobileSubstrate/MobileSubstrate.dylib", "/bin/bash", "/usr/sbin/sshd", "/etc/apt", "/private/var/lib/apt/" If you are planning to extend the list, please do as follow: const completeList = [...DeviceAuthenticityWeb.DEFAULT_IOS_JAILBREAK_PATHS, ...yourList]; Then use completeList in the plugin. Otherwise, the default list will be used.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| **`offendingAppStoreSchemas`** | <code>string[]</code> | Override the default forbidden schemas for app stores (iOS only). Example: `['cydia://', 'sileo://']` "cydia://", "sileo://", "zbra://", "filza://", "undecimus://", "activator://"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **`androidRootedPaths`**       | <code>string[]</code> | Override the default rooted paths for detection (Android only). "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su", "/system/bin/failsafe/su", "/data/local/su", "/su/bin/su" If you are planning to extend the list, please do as follow: const completeList = [...DeviceAuthenticityWeb.DEFAULT_ANDROID_ROOTED_PATHS, ...yourList]; Then use completeList in the plugin. Otherwise, the default list will be used.                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 
 #### DeviceAuthenticityJailbreakOptions
 
-<code>{ jailbreakIndicatorPaths?: string[]; forbiddenAppStoreSchemas?: string[]; }</code>
+Options for configuring jailbreak detection (iOS only).
+
+| Prop                           | Type                  | Description                                      |
+| ------------------------------ | --------------------- | ------------------------------------------------ |
+| **`jailbreakIndicatorPaths`**  | <code>string[]</code> | Custom paths to check for jailbreak indicators.  |
+| **`forbiddenAppStoreSchemas`** | <code>string[]</code> | Custom schemas to detect third-party app stores. |
 
 
 #### DeviceAuthenticityRootedOptions
 
-<code>{ rootIndicatorPaths?: string[]; rootIndicatorTags?: string[]; rootIndicatorFiles?: string[]; }</code>
+Options for configuring root detection (Android only).
+
+| Prop                     | Type                  | Description                                     |
+| ------------------------ | --------------------- | ----------------------------------------------- |
+| **`rootIndicatorPaths`** | <code>string[]</code> | Custom paths to check for root indicators.      |
+| **`rootIndicatorTags`**  | <code>string[]</code> | Custom tags to check for root indicators.       |
+| **`rootIndicatorFiles`** | <code>string[]</code> | Custom file paths to check for root indicators. |
 
 
 #### DeviceAuthenticityInstalledFromAllowedStoreOptions
 
-<code>{ allowedStores?: string[]; }</code>
+Options for checking if the app is installed from an allowed store (Android only).
+
+| Prop                | Type                  | Description                          |
+| ------------------- | --------------------- | ------------------------------------ |
+| **`allowedStores`** | <code>string[]</code> | List of allowed store package names. |
 
 
 #### DeviceAuthenticityCheckApkCertSignatureOptions
 
-<code>{ expectedApkSignature: string; }</code>
+Options for checking the APK certificate signature (Android only).
+
+| Prop                       | Type                | Description                                            |
+| -------------------------- | ------------------- | ------------------------------------------------------ |
+| **`expectedApkSignature`** | <code>string</code> | The expected APK certificate signature for validation. |
 
 
 #### DeviceAuthenticityCheckTagsOptions
 
-<code>{ rootIndicatorTags: string[]; }</code>
+Options for checking offending tags (Android only).
+
+| Prop                    | Type                  | Description                                        |
+| ----------------------- | --------------------- | -------------------------------------------------- |
+| **`rootIndicatorTags`** | <code>string[]</code> | List of tags to check against for root indicators. |
 
 
 #### DeviceAuthenticityCheckPathsOptions
 
-<code>{ jailbreakIndicatorPaths: string[]; }</code>
+Options for checking offending paths (iOS only).
+
+| Prop                          | Type                  | Description                                      |
+| ----------------------------- | --------------------- | ------------------------------------------------ |
+| **`jailbreakIndicatorPaths`** | <code>string[]</code> | List of paths to check for jailbreak indicators. |
 
 
 #### DeviceAuthenticityCheckExecutableFilesOptions
 
-<code>{ rootIndicatorFiles: string[]; }</code>
+Options for checking offending executable files (Android only).
+
+| Prop                     | Type                  | Description                                      |
+| ------------------------ | --------------------- | ------------------------------------------------ |
+| **`rootIndicatorFiles`** | <code>string[]</code> | List of file paths to check for root indicators. |
 
 </docgen-api>
 

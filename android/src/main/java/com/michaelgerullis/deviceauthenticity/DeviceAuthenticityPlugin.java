@@ -1,11 +1,11 @@
 package com.michaelgerullis.deviceauthenticity;
 
+import android.content.Context;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
-import android.content.Context;
 
 @CapacitorPlugin(name = "DeviceAuthenticity")
 public class DeviceAuthenticityPlugin extends Plugin {
@@ -37,7 +37,7 @@ public class DeviceAuthenticityPlugin extends Plugin {
     public void isInstalledFromAllowedStore(PluginCall call) {
         implementation.checkAuthenticity(call);
     }
-    
+
     @PluginMethod
     public void getApkSignature(PluginCall call) {
         implementation.getApkCertSignature(call);
@@ -65,7 +65,7 @@ public class DeviceAuthenticityPlugin extends Plugin {
 
     @PluginMethod
     public void checkExecutableFiles(PluginCall call) {
-        implementation.checkExecutableFiles(call);  
+        implementation.checkExecutableFiles(call);
     }
 
     @PluginMethod

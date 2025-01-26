@@ -1,64 +1,56 @@
 package com.michaelgerullis.deviceauthenticity;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.os.Build;
+import android.util.Base64;
+import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.JSArray;
-
-import java.io.File;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import android.os.Build;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.content.pm.PackageInfo;
-import android.util.Base64;
-
 import org.json.JSONException;
 
 public class DeviceAuthenticity {
 
     private static final String DEFAULT_ALLOWED_STORE = "com.android.vending";
     private static final String[] DEFAULT_FORBIDDEN_TAGS = new String[] {
-            "test-keys", // Common for many rooted devices
-            "dev-keys", // Development keys, often seen in custom ROMs
-            "userdebug", // User-debuggable build, common in rooted devices
-            "engineering", // Engineering build, may indicate a modified system
-            "release-keys-debug", // Debug version of release keys
-            "custom", // Explicitly marked as custom
-            "rooted", // Explicitly marked as rooted (rare, but possible)
-            "supersu", // Indicates SuperSU rooting tool
-            "magisk", // Indicates Magisk rooting framework
-            "lineage", // LineageOS custom ROM
-            "unofficial" // Unofficial build, common in custom ROMs
+        "test-keys", // Common for many rooted devices
+        "dev-keys", // Development keys, often seen in custom ROMs
+        "userdebug", // User-debuggable build, common in rooted devices
+        "engineering", // Engineering build, may indicate a modified system
+        "release-keys-debug", // Debug version of release keys
+        "custom", // Explicitly marked as custom
+        "rooted", // Explicitly marked as rooted (rare, but possible)
+        "supersu", // Indicates SuperSU rooting tool
+        "magisk", // Indicates Magisk rooting framework
+        "lineage", // LineageOS custom ROM
+        "unofficial" // Unofficial build, common in custom ROMs
     };
 
     private static final String[] DEFAULT_FORBIDDEN_PATHS = new String[] {
-            "/system/app/Superuser.apk",
-            "/sbin/su",
-            "/system/bin/su",
-            "/system/xbin/su",
-            "/data/local/xbin/su",
-            "/data/local/bin/su",
-            "/system/sd/xbin/su",
-            "/system/bin/failsafe/su",
-            "/data/local/su",
-            "/su/bin/su"
+        "/system/app/Superuser.apk",
+        "/sbin/su",
+        "/system/bin/su",
+        "/system/xbin/su",
+        "/data/local/xbin/su",
+        "/data/local/bin/su",
+        "/system/sd/xbin/su",
+        "/system/bin/failsafe/su",
+        "/data/local/su",
+        "/su/bin/su"
     };
 
-    private static final String[] DEFAULT_FORBIDDEN_EXECUTABLES = new String[] {
-            "su",
-            "/system/xbin/su",
-            "/system/bin/su",
-            "busybox"
-    };
+    private static final String[] DEFAULT_FORBIDDEN_EXECUTABLES = new String[] { "su", "/system/xbin/su", "/system/bin/su", "busybox" };
 
     private Context context;
 
@@ -128,8 +120,7 @@ public class DeviceAuthenticity {
             JSArray rootIndicatorTagsArray = call.getArray("rootIndicatorTags");
             JSArray rootIndicatorPathsArray = call.getArray("rootIndicatorPaths");
             JSArray rootIndicatorFilesArray = call.getArray("rootIndicatorFiles");
-            ret.put("isRooted",
-                    _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
+            ret.put("isRooted", _checkIsRooted(rootIndicatorTagsArray, rootIndicatorPathsArray, rootIndicatorFilesArray));
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error checking device rooted status: " + e.getMessage());
@@ -235,13 +226,11 @@ public class DeviceAuthenticity {
     private String _getApkCertSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
         PackageInfo packageInfo;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
-                    PackageManager.GET_SIGNING_CERTIFICATES);
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES);
             Signature[] signatures = packageInfo.signingInfo.getApkContentsSigners();
             return _calculateSignature(signatures[0]);
         } else {
-            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(),
-                    PackageManager.GET_SIGNATURES);
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
             Signature[] signatures = packageInfo.signatures;
             return _calculateSignature(signatures[0]);
         }
@@ -269,7 +258,7 @@ public class DeviceAuthenticity {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(sig.toByteArray());
         byte[] digest = md.digest();
-        
+
         // Convert to colon-separated hex format
         StringBuilder hexString = new StringBuilder();
         for (byte b : digest) {
@@ -284,38 +273,39 @@ public class DeviceAuthenticity {
 
     // @TODO: add ability to pass extra emulator checks
     private boolean _isEmulator() {
-        return Build.FINGERPRINT.startsWith("generic")
-                || Build.FINGERPRINT.startsWith("unknown")
-                || Build.MODEL.contains("google_sdk")
-                || Build.MODEL.contains("Emulator")
-                || Build.MODEL.contains("Android SDK built for x86")
-                || Build.MANUFACTURER.contains("Genymotion")
-                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
-                || "google_sdk".equals(Build.PRODUCT);
-
+        return (
+            Build.FINGERPRINT.startsWith("generic") ||
+            Build.FINGERPRINT.startsWith("unknown") ||
+            Build.MODEL.contains("google_sdk") ||
+            Build.MODEL.contains("Emulator") ||
+            Build.MODEL.contains("Android SDK built for x86") ||
+            Build.MANUFACTURER.contains("Genymotion") ||
+            (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) ||
+            "google_sdk".equals(Build.PRODUCT)
+        );
     }
 
     // @TODO: add ability to pass extra emulator checks
     private boolean _isRunningInEmulator() {
         boolean result = false;
         try {
-            String buildDetails = Build.FINGERPRINT + Build.DEVICE + Build.MODEL + Build.BRAND + Build.PRODUCT
-                    + Build.MANUFACTURER + Build.HARDWARE;
-            result = buildDetails.toLowerCase().contains("generic")
-                    || buildDetails.toLowerCase().contains("emulator")
-                    || buildDetails.toLowerCase().contains("sdk");
+            String buildDetails =
+                Build.FINGERPRINT + Build.DEVICE + Build.MODEL + Build.BRAND + Build.PRODUCT + Build.MANUFACTURER + Build.HARDWARE;
+            result =
+                buildDetails.toLowerCase().contains("generic") ||
+                buildDetails.toLowerCase().contains("emulator") ||
+                buildDetails.toLowerCase().contains("sdk");
         } catch (Exception e) {
             // Handle any exceptions
         }
         return result;
     }
 
-    private boolean _checkIsRooted(JSArray rootIndicatorTagsArray, JSArray rootIndicatorPathsArray,
-            JSArray rootIndicatorFilesArray) {
+    private boolean _checkIsRooted(JSArray rootIndicatorTagsArray, JSArray rootIndicatorPathsArray, JSArray rootIndicatorFilesArray) {
         try {
-            return _checkTags(rootIndicatorTagsArray)
-                    || _checkPaths(rootIndicatorPathsArray)
-                    || _checkExecutableFiles(rootIndicatorFilesArray);
+            return (
+                _checkTags(rootIndicatorTagsArray) || _checkPaths(rootIndicatorPathsArray) || _checkExecutableFiles(rootIndicatorFilesArray)
+            );
         } catch (JSONException e) {
             e.printStackTrace();
             return false;
@@ -326,8 +316,7 @@ public class DeviceAuthenticity {
         String buildTags = android.os.Build.TAGS;
         String[] tagsToCheck;
 
-        if (buildTags == null || buildTags.isEmpty())
-            return false;
+        if (buildTags == null || buildTags.isEmpty()) return false;
 
         if (rootIndicatorTagsArray != null && rootIndicatorTagsArray.length() > 0) {
             tagsToCheck = new String[rootIndicatorTagsArray.length()];
@@ -359,8 +348,7 @@ public class DeviceAuthenticity {
             paths = DEFAULT_FORBIDDEN_PATHS;
         }
         for (String path : paths) {
-            if (new File(path).exists())
-                return true;
+            if (new File(path).exists()) return true;
         }
         return false;
     }
@@ -377,10 +365,7 @@ public class DeviceAuthenticity {
             executableFiles = new ArrayList<>(Arrays.asList(DEFAULT_FORBIDDEN_EXECUTABLES));
         }
 
-        ArrayList<String> commands = new ArrayList<>(Arrays.asList(
-                "which",
-                "id",
-                "ls /data"));
+        ArrayList<String> commands = new ArrayList<>(Arrays.asList("which", "id", "ls /data"));
 
         for (String executableFile : executableFiles) {
             for (String command : commands) {
@@ -415,8 +400,7 @@ public class DeviceAuthenticity {
 
     private boolean _isNotInstalledFromAllowedStore(List<String> allowedStores) {
         try {
-            String installer = context.getPackageManager()
-                    .getInstallerPackageName(context.getPackageName());
+            String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
             if (installer == null) {
                 return true;
             }

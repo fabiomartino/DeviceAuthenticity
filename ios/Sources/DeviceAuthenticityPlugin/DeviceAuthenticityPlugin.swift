@@ -6,7 +6,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "DeviceAuthenticityPlugin"
     public let jsName = "DeviceAuthenticity"
     public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "checkAuthenticity", returnType: CAPPluginReturnPromise), 
+        CAPPluginMethod(name: "checkAuthenticity", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "isEmulator", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "isJailbroken", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "checkPaths", returnType: CAPPluginReturnPromise),
@@ -16,13 +16,13 @@ public class DeviceAuthenticityPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "isInstalledFromAllowedStore", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getApkCertSignature", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "checkApkCertSignature", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "checkTags", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "checkTags", returnType: CAPPluginReturnPromise)
     ]
     private let implementation = DeviceAuthenticity()
     @objc func checkAuthenticity(_ call: CAPPluginCall) {
         implementation.checkAuthenticity(call)
     }
-    
+
     @objc func isEmulator(_ call: CAPPluginCall) {
         implementation.isEmulator(call)
     }
@@ -34,7 +34,7 @@ public class DeviceAuthenticityPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func checkPaths(_ call: CAPPluginCall) {
         implementation.checkPaths(call)
     }
-    
+
     @objc func checkPrivateWrite(_ call: CAPPluginCall) {
         implementation.checkPrivateWrite(call)
     }
@@ -63,4 +63,3 @@ public class DeviceAuthenticityPlugin: CAPPlugin, CAPBridgedPlugin {
         implementation.checkTags(call)
     }
 }
-    

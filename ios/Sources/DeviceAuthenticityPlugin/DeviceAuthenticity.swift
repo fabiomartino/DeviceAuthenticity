@@ -1,7 +1,6 @@
 import Foundation
 import Capacitor
 
-
 struct CheckPathsResult {
     let hasOffendingPaths: Bool
     let detectedOffendingPaths: [String]
@@ -17,8 +16,8 @@ struct CheckPrivateWriteResult {
 
 struct CheckJailbreakResult {
     let isJailbroken: Bool
-    let canWritePrivate: Bool;
-    let hasOffendingPaths: Bool;
+    let canWritePrivate: Bool
+    let hasOffendingPaths: Bool
     let detectedOffendingPaths: [String]
     let offendingAppStoreSchemas: [String]
     let detectedPrivateWritePaths: [String]
@@ -32,7 +31,7 @@ class DeviceAuthenticity {
         let canWritePrivate: CheckPrivateWriteResult = _checkPrivateWrite()
         let isEmulator = _isRunningOnSimulator()
         let hasThirdPartyAppStore: CheckAppstoresResult = _hasThirdPartyAppStore(offendingAppStoreSchemas: offendingAppStoreSchemas)
-        var failedChecks: [String] = [];
+        var failedChecks: [String] = []
         let isJailbroken = isEmulator || canWritePrivate.canWritePrivate || hasPaths.hasOffendingPaths || hasThirdPartyAppStore.hasThirdPartyAppStore
         if isJailbroken {
             failedChecks.append("isJailbroken")
@@ -62,10 +61,10 @@ class DeviceAuthenticity {
             "failedChecks": failedChecks
         ])
     }
-    
+
     func isEmulator(_ call: CAPPluginCall) {
         let isEmulator = _isRunningOnSimulator()
-        
+
         call.resolve(["isEmulator": isEmulator])
     }
 
@@ -73,31 +72,31 @@ class DeviceAuthenticity {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
         let offendingAppStoreSchemas = call.getArray("offendingAppStoreSchemas", String.self) ?? []
         let isJailbroken: CheckJailbreakResult = _checkIsJailbroken(jailbreakIndicatorPaths: jailbreakIndicatorPaths, offendingAppStoreSchemas: offendingAppStoreSchemas)
-        
-        call.resolve(["isJailbroken": isJailbroken.isJailbroken, 
-                    "detectedOffendingPaths": isJailbroken.detectedOffendingPaths, 
-                    "canWritePrivate": isJailbroken.canWritePrivate,
-                    "detectedPrivateWritePaths": isJailbroken.detectedPrivateWritePaths,
-                    "detectedThirdPartyAppStoreSchemas": isJailbroken.offendingAppStoreSchemas])
+
+        call.resolve(["isJailbroken": isJailbroken.isJailbroken,
+                      "detectedOffendingPaths": isJailbroken.detectedOffendingPaths,
+                      "canWritePrivate": isJailbroken.canWritePrivate,
+                      "detectedPrivateWritePaths": isJailbroken.detectedPrivateWritePaths,
+                      "detectedThirdPartyAppStoreSchemas": isJailbroken.offendingAppStoreSchemas])
     }
 
     func checkPaths(_ call: CAPPluginCall) {
         let jailbreakIndicatorPaths = call.getArray("jailbreakIndicatorPaths", String.self) ?? []
         let hasPaths = _checkOffendingPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
-        
+
         call.resolve(["hasPaths": hasPaths])
     }
-    
+
     func checkPrivateWrite(_ call: CAPPluginCall) {
         let hasPaths = _checkPrivateWrite()
-        
+
         call.resolve(["canWritePrivate": hasPaths])
     }
 
     func hasThirdPartyAppStore(_ call: CAPPluginCall) {
         let offendingAppStoreSchemas = call.getArray("offendingAppStoreSchemas", String.self) ?? []
         let hasThirdPartyAppStore = _hasThirdPartyAppStore(offendingAppStoreSchemas: offendingAppStoreSchemas)
-        
+
         call.resolve(["hasThirdPartyAppStore": hasThirdPartyAppStore])
     }
 
@@ -120,23 +119,23 @@ class DeviceAuthenticity {
     func checkTags(_ call: CAPPluginCall) {
         call.resolve(["error": "Not implemented on iOS"])
     }
-    
-    private func _checkIsJailbroken(jailbreakIndicatorPaths: [String] = [],offendingAppStoreSchemas: [String] = []) -> CheckJailbreakResult {
+
+    private func _checkIsJailbroken(jailbreakIndicatorPaths: [String] = [], offendingAppStoreSchemas: [String] = []) -> CheckJailbreakResult {
         let checkPathsResult = _checkOffendingPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
         let hasThirdPartyAppStore = _hasThirdPartyAppStore(offendingAppStoreSchemas: offendingAppStoreSchemas)
         let canWritePrivate = _checkPrivateWrite()
-        let isJailbroken = checkPathsResult.hasOffendingPaths || 
-            hasThirdPartyAppStore.hasThirdPartyAppStore || 
-            canWritePrivate.canWritePrivate;
+        let isJailbroken = checkPathsResult.hasOffendingPaths ||
+            hasThirdPartyAppStore.hasThirdPartyAppStore ||
+            canWritePrivate.canWritePrivate
 
         return CheckJailbreakResult(isJailbroken: isJailbroken,
-            canWritePrivate: canWritePrivate.canWritePrivate,
-            hasOffendingPaths: checkPathsResult.hasOffendingPaths,
-            detectedOffendingPaths: checkPathsResult.detectedOffendingPaths,
-            offendingAppStoreSchemas: hasThirdPartyAppStore.offendingAppStoreSchemas,
-            detectedPrivateWritePaths: canWritePrivate.detectedPrivateWritePaths)
+                                    canWritePrivate: canWritePrivate.canWritePrivate,
+                                    hasOffendingPaths: checkPathsResult.hasOffendingPaths,
+                                    detectedOffendingPaths: checkPathsResult.detectedOffendingPaths,
+                                    offendingAppStoreSchemas: hasThirdPartyAppStore.offendingAppStoreSchemas,
+                                    detectedPrivateWritePaths: canWritePrivate.detectedPrivateWritePaths)
     }
-    
+
     private func _checkOffendingPaths(jailbreakIndicatorPaths: [String]) -> CheckPathsResult {
         let fileManager = FileManager.default
         let jailbreakPaths = [
@@ -158,9 +157,8 @@ class DeviceAuthenticity {
             "/private/var/jailbreak",
             "/var/mobile/Library/SBSettings/Themes"
         ]
-        var paths: [String] = [];
+        var paths: [String] = []
         let pathsToCheck = jailbreakIndicatorPaths.count > 0 ? jailbreakIndicatorPaths : jailbreakPaths
-
 
         for path in pathsToCheck {
             if fileManager.fileExists(atPath: path) {
@@ -169,7 +167,7 @@ class DeviceAuthenticity {
         }
         return CheckPathsResult(hasOffendingPaths: !paths.isEmpty, detectedOffendingPaths: paths)
     }
-    
+
     private func _checkPrivateWrite() -> CheckPrivateWriteResult {
         let fileManager = FileManager.default
         do {
@@ -180,7 +178,7 @@ class DeviceAuthenticity {
             return CheckPrivateWriteResult(canWritePrivate: false, detectedPrivateWritePaths: [])
         }
     }
-    
+
     private func _hasThirdPartyAppStore(offendingAppStoreSchemas: [String] = []) -> CheckAppstoresResult {
         let forbiddenAppStoreSchemasDefault = [
             "cydia://",
@@ -190,10 +188,10 @@ class DeviceAuthenticity {
             "undecimus://",
             "activator://"
         ]
-        
+
         let schemasToCheck = offendingAppStoreSchemas.count > 0 ? offendingAppStoreSchemas : forbiddenAppStoreSchemasDefault
         var foundSchemas: [String] = []
-        
+
         for schema in schemasToCheck {
             if let url = URL(string: schema) {
                 if UIApplication.shared.canOpenURL(url) {
@@ -206,11 +204,11 @@ class DeviceAuthenticity {
 
     private func _isRunningOnSimulator() -> Bool {
         #if arch(i386) || arch(x86_64)
-            return false
+        return false
         #elseif targetEnvironment(simulator)
-            return true
+        return true
         #else
-            return false
+        return false
         #endif
     }
 }
